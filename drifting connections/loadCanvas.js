@@ -257,9 +257,10 @@ function drawConnections(){
                 //draw white lines between them    
                 let thisDist = node.closestNeighbourCosts[j];
 
-                let ratio = Math.min(1,(highestDist-thisDist)/highestDist);
+                let ratio = (highestDist-thisDist)/highestDist;
+                ratio = Math.min(ratio+0.05,1);
                 //brighten the line proportionally based on this nodes closest and farthest nodes. 
-                ratio = Math.sqrt(ratio);
+                
                 let color = rgb(ratio*255,ratio*255,ratio*255);          
                 //only draw the closest connection color, this is different depending on this node and the other one?
                 drawConnectionBetween(node,node.closestNeighbours[j],color,5)
