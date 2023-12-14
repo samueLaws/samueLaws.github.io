@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-uk">
+    <head>
+        <title>Game of life</title>
+        <link rel="stylesheet" href="stylin.css">
+    </head>
+    <body>
+        <a href="./../index.html">Home</a>
+        <div id="scene">
+            <div id="canvas_wrapper">
+                <canvas id="mainCanvas"></canvas>    
+            </div>
+            <div id="controls">
+                <div class="inner-controls">
+                    <p>Step-through Controller</p>
+                    <button id="step_button" type="button">Step Forward</button>
+                    <button id="start_button" type="button">Start steps</button>
+                    <button id="stop_button" type="button">Stop steps</button>
+                    <label>Number of steps to take until automatic stop.</label>
+                    <input id="step_count" type="number">
+                    <label>Time waited between each rule call. (Has a lower limit of the rule time taken)</label>
+                    <input id="step_speed" type="number"> 
+                    <label id="time_taken_label"></label>
+                </div>
+                <div class="inner-controls">
+                    <p>Movement Controller</p>
+                    <button id="left_move" type="button">Left</button>
+                    <button id="right_move" type="button">Right</button>
+                    <button id="up_move" type="button">Up</button>
+                    <button id="down_move" type="button">Down</button>
+                    <label>Move speed</label>
+                    <input id="move_speed" type="number">
+                    <button id="zoom_in" type="button">Zoom In</button>
+                    <button id="zoom_out" type="button">Zoom Out</button>
+                </div>
+                <div class="inner-controls">
+                    <p>Extra controls</p>
+                    <button id="randomFillScreen" type="button">Random fill</button>
+                    <button id="clearScreen" type="button">Empty the board</button>
+                </div>
+            </div>
+        </div>
+        <script src="CellStuff.js"></script>
+        <script src="FrameController.js"></script>
+        <script src="MainEngine.js"></script>
+    </body>
+</html>

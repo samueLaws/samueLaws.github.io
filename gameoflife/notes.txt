@@ -1,0 +1,56 @@
+Units:
+Pix: pX,pY.
+Cell: cX,cY.
+Chunk: kX,kY.
+
+
+Pix is the pixel value as used in mouse coordinates and when drawing to the scene
+
+
+
+Cell is the cell coordinates as if they were all part of the same array, but centered around the 0,0 chunk.
+
+Inner cell coordinates is cell % chunkWidth
+
+Chunk is the coordinates of the chunk, Cell = (Pix % Chunk.Size)/Cell.Size
+
+
+
+
+-Ideas for progress
+    -Interface
+    //Camera controls
+    //Step controls
+    //alt rule set
+
+    -Program improvements
+
+    //should cell groups that are stable be continually processed?
+
+    //Prune the chunks that haven't been used in a long time, and are far from other chunks, like removing them.
+
+    //adapt the auto frame time to slow down automatically as processing slows.
+    //if the frame takes over 1 second to draw disable auto processing
+
+    //implement methods to change the customRules within chunkManager
+
+    //history extention, more than 2 sides to the board.
+
+    //save and load board configs 
+
+    //fill the background of chunks, for more consistent filling
+
+    //implement an ordered chunk storage system, related to the position of the chunks. could be a spacial hash map
+
+    //add an option to color the undrawn frames the same as the background
+
+    //add graph to show past rule times
+
+    //show how many steps are left in current run.
+
+
+//Date - 24/11/2023
+
+
+Never going to touch this hot garbage again.
+//Date - 14/12/23
