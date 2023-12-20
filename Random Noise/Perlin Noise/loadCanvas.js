@@ -16,8 +16,8 @@ ctx.fillRect(0,0,mainCanvas.width,mainCanvas.height)
 
 
 //could represent the different influences through a function, like only taking the closest.
-const n = 20;
-const m = 20;
+const n = 8;
+const m = 8;
 const vectorMatrix = new Matrix(n+1,m+1);
 vectorMatrix.forEachIndex(Vector.newXYUnitary);
 
@@ -46,6 +46,48 @@ function findNonInterpValueAt(x,y){
         sum += dotProducts[i]*distributions[i];
     }
     return sum; //-1 to 1
+}
+
+function findInterpValueAt(x,y){
+    let sqIndx = findIndexPos(x,y);
+    let posWithinSquare = getLocalPos(x,y);
+    let unitaryPosWithinSquare = [posWithinSquare[0]/vectorSpacing[0],posWithinSquare[1]/vectorSpacing[1]]
+    let closestFourVerteces = [vectorMatrix.get(sqIndx[0],sqIndx[1]),vectorMatrix.get(sqIndx[0]+1,sqIndx[1]),vectorMatrix.get(sqIndx[0]+1,sqIndx[1]+1),vectorMatrix.get(sqIndx[0],sqIndx[1]+1)];
+    let positionFromCorners = getPosFromCorners(posWithinSquare);    
+
+    let dotProducts = getDotProducts(positionFromCorners,closestFourVerteces); 
+
+    let distributions = get_smoothingFunctions(unitaryPosWithinSquare); //proportion each should be considered (0-1) summing to 1
+    let sum = 0;
+    for(let i = 0; i < 4; i++){
+        sum += dotProducts[i]*distributions[i];
+    }
+    return sum; //-1 to 1
+}
+function get_smoothingFunctions(pos){
+    //when at the center point the value should be 0 for all corners
+    let distributions = []
+    distributions.length = 4;
+    distributions[0] = consFunc(1-pos[0],1-pos[1]);
+    distributions[1] = consFunc(pos[0],1-pos[1]);
+    distributions[2] = consFunc(pos[0],pos[1]);
+    distributions[3] = consFunc(1-pos[0],pos[1]);
+    return distributions;
+}
+
+function consFunc(x,y){
+    return Math.max(0,(x*y));
+}
+
+function get_smoothingFunctionsBP(posWithinSquare){ 
+    //PRODUCES A BOUNDARY PROBLEM
+    let distributions = []
+    distributions.length = 4;
+    distributions[0] = pwdSmoothingFunctionLinear(1-posWithinSquare[0])*pwdSmoothingFunctionLinear(1-posWithinSquare[1]); //tl
+    distributions[1] = pwdSmoothingFunctionLinear(posWithinSquare[0])*pwdSmoothingFunctionLinear(1-posWithinSquare[1]); //tr
+    distributions[2] = pwdSmoothingFunctionLinear(posWithinSquare[0])*pwdSmoothingFunctionLinear(posWithinSquare[1]); //br
+    distributions[3] = pwdSmoothingFunctionLinear(1-posWithinSquare[0])*pwdSmoothingFunctionLinear(posWithinSquare[1]); //bl
+    return distributions;
 }
 
 function getLocalPos(x,y){
@@ -98,8 +140,7 @@ function getDotProducts(vectorsFromEach,fourVectors){
 function distribution_Closest(distances){
     //determine how the distances should weight the output value as determined by the 4 dot product values,
     //weights should reasonably be 0-1 for interpolation
-    let closestIndex = findIndexOfSmallestValue(distances);
-
+    let closestIndex = findIndexOfSmallestValue(distances);    
     let weights = [];
     weights.length = 4;
     for(let i = 0; i < 4; i++){
@@ -123,14 +164,18 @@ function findIndexOfSmallestValue(array){ //non null array
     return smallestIndex;
 }
 
-const pwPoints = [[0,0],[0.2,0.05],[0.45,0.3],[0.5,0.5],[0.55,0.7],[0.8,0.95],[1,1]];
+const pwPoints = [[0,0],[0.2,0.1],[0.8,0.9],[1,1]];
 //sigmoid approximation
 function pwdSmoothingFunctionLinear(x){
     for(let i = 0; i < pwPoints.length-1; i++){
         let pA = pwPoints[i];
         let pB = pwPoints[i+1];
         if(pA[0] <= x && x < pB[0]){
-            return pB[1]*(x-pA[0])/(pB[0]-pA[0]) + pA[1]*(x-pB[0])/(pA[0]-pB[0]); 
+            let k = pB[1]*(x-pA[0])/(pB[0]-pA[0]) + pA[1]*(x-pB[0])/(pA[0]-pB[0]); 
+            if(k < 0 || k > 1){
+                let catchMe;
+            }
+            return k;
         }
     }
     if(x < 0){
@@ -138,21 +183,6 @@ function pwdSmoothingFunctionLinear(x){
     }else{
         return 1;
     }
-}
-
-function combineLinearFunction(posA,dotProds){
-    let pos = [posA[0]/vectorSpacing[0],posA[1]/vectorSpacing[1]];
-    let pX = pwdS(pos[0]);
-    let pY = pwdS(pos[1]);
-    let sum = 0;
-    sum += dotProds[0]*pwdS(1-pX)*pwdS(1-pY);
-    sum += dotProds[1]*pwdS(1-pX)*pwdS(pY);
-    sum += dotProds[2]*pwdS(pX)*pwdS(pY);
-    sum += dotProds[3]*pwdS(pX)*pwdS(1-pY);
-    return sum;
-}
-function pwdS(x){
-    return pwdSmoothingFunctionLinear(x);
 }
 
 
@@ -163,7 +193,7 @@ function paintCanvas(){
     let maxW = 128;
     for(let i = 0; i < 800; i++){
         for(let j = 0; j < 800; j++){
-            let w = findNonInterpValueAt(i,j)*128+128;// desired output is -1-1
+            let w = findInterpValueAt(i,j)*128+128;// desired output is -1-1
             minW = Math.min(minW,w);
             maxW = Math.max(maxW,w);
             ctx.fillStyle = rgb(w,w,w);
