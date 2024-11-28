@@ -4,15 +4,23 @@ const ctx = mainCanvas.getContext("2d");
 ctx.fillStyle = "black";
 ctx.fillRect(0,0,mainCanvas.width,mainCanvas.height)
 
+const resetButton = document.getElementById("reset_button");
+resetButton.addEventListener("click", newNodeNetwork);
 
 mainCanvas.addEventListener("click",onClickCanvas,false);
 const connectionNodes = [0,1,0];
-//generate 50 nodes
-var listOfNodes = [];
-var numberOfNodes = 64;
-makeNewNetwork(numberOfNodes);
 
-findRandomPair();
+var listOfNodes;
+var numberOfNodes;
+newNodeNetwork()
+
+function newNodeNetwork(){
+    listOfNodes = [];
+    // ! get this number from the currently specified box.
+    numberOfNodes = 64;
+    makeNewNetwork(numberOfNodes);
+    findRandomPair();
+}
 
 function getClickPosition(e){
     var element = mainCanvas;
