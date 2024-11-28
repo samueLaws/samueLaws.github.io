@@ -7,6 +7,9 @@ ctx.fillRect(0,0,mainCanvas.width,mainCanvas.height)
 const resetButton = document.getElementById("reset_button");
 resetButton.addEventListener("click", newNodeNetwork);
 
+const nodeCountInput = document.getElementById("node_count")
+nodeCountInput.value = 64
+
 mainCanvas.addEventListener("click",onClickCanvas,false);
 const connectionNodes = [0,1,0];
 
@@ -17,9 +20,10 @@ newNodeNetwork()
 function newNodeNetwork(){
     listOfNodes = [];
     // ! get this number from the currently specified box.
-    numberOfNodes = 64;
+    numberOfNodes = nodeCountInput.value;
     makeNewNetwork(numberOfNodes);
     findRandomPair();
+    frameFunction();
 }
 
 function getClickPosition(e){
@@ -57,7 +61,6 @@ function onClickCanvas(e){
     }
     //redraw the scene
     frameFunction();
-    drawNodePair();
 }
 
 function getClosestNodeIndex(ar){
